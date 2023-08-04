@@ -6,18 +6,20 @@ import {
   responsiveWidth,
   responsiveFontSize
 } from "react-native-responsive-dimensions";
+import ChatScreen from './appFlow/chatscreen/chatscreen';
 
 
 
 const ModalPopUp = (props) => {
 
   const [isModalVisible, setModalVisible] = useState(true);
-  const { navigation, image, name, members, senddata } = props;
+  const { navigation, image, name, members, senddata, userAvatar } = props;
 
   const chatScreenNav = () => {
-
-    navigation.navigate('ChatScreen');
-    // console.log("sending data", navigation);
+    
+    navigation.navigate('ChatScreen',{userAvatar, name});
+    //console.log('user avatar: ', userAvatar,name);
+    
     senddata(false);  };
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
