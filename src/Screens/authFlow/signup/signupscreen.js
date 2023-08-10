@@ -1,17 +1,42 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, ScrollView, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
+import { View, Text,  Image, TextInput, ScrollView,  TouchableOpacity, Alert } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize
-} from "react-native-responsive-dimensions";
+import { appStyles } from '../../../services/utilities/appstyle';
+
 
 const SignUpScreen = ({ navigation }) => {
   const [isSelected, setSelection] = useState(false);
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const existingUsername = 'johndoe123'; // Replace with your existing username
+  
+  const handleCheckUsername = () => {
+    if (username === existingUsername) {
+      Alert.alert('Error', 'Your username already exists');
+    } else {
+      // Username does not match, check password and confirm password
+      if (password === confirmPassword) {
+        navigation.navigate('appNavigation', { screen: 'ProfileScreen' });
+      } else {
+        Alert.alert('Error', 'Passwords do not match');
+      }
+    }
+  };
+
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+  };
+  
+  const handleConfirmPasswordChange = (text) => {
+    setConfirmPassword(text);
+  };
+  const handleUsernameChange = (text) => {
+    setUsername(text);
+  };
+
   const togglePasswordVisibility = () => {
     setPasswordVisible(!isPasswordVisible);
   };
@@ -23,70 +48,72 @@ const SignUpScreen = ({ navigation }) => {
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}
       keyboardShouldPersistTaps="handled">
 
-      <View style={{ flex: 1 }}>
+      <View style={appStyles.container}>
         <View>
           <Image
             source={require('../../../assets/justtalk.png')}
-            style={styles.headerImage}
+            style={appStyles.headerImage}
           />
         </View>
 
         <View>
-          <Text style={styles.textStyle}>Welcome To SignUp!</Text>
+          <Text style={[appStyles.welcomesignuptext,appStyles.textfontfamily]}>Welcome To SignUp!</Text>
         </View>
-        <View style={styles.underLineView} />
+        <View style={appStyles.underLineView} />
       </View>
 
 
       <View style={{ flex: 2 }}>
-        <View style={styles.textInputFieldMainView}>
-          <Text style={styles.textLabel}>Username</Text>
+        <View style={appStyles.textInputFieldMainView}>
+          <Text style={appStyles.textlabel}>Username</Text>
           <View style={{ flexDirection: 'row' }}>
-            <TextInput style={styles.textInput} placeholder='johndoe123'></TextInput>
+            <TextInput style={appStyles.inputTextField} placeholder='johndoe123' onChangeText={handleUsernameChange} value={username}/>
             <TouchableOpacity>
-              <Image style={styles.textInputImage} source={require('../../../assets/checkcircle.png')} />
-            </TouchableOpacity>
+            {username === existingUsername && (
+              <Image style={appStyles.textInputImage} source={require('../../../assets/checkcircle.png')} />
+              )}
+              </TouchableOpacity>
           </View>
         </View>
 
 
-        <View style={styles.textInputFieldMainView}>
-          <Text style={styles.textLabel}>Password</Text>
+        <View style={appStyles.textInputFieldMainView}>
+          <Text style={appStyles.textlabel}>Password</Text>
           <View style={{ flexDirection: 'row' }}>
-            <TextInput secureTextEntry={!isPasswordVisible} style={styles.textInput} placeholder='**********'></TextInput>
+            <TextInput secureTextEntry={!isPasswordVisible} style={appStyles.inputTextField} placeholder='**********' onChangeText={handlePasswordChange} value={password}></TextInput>
             <TouchableOpacity onPress={togglePasswordVisibility}>
-              <Image style={styles.textInputImage} source={require('../../../assets/eye.png')} />
+              <Image style={appStyles.textInputImage} source={require('../../../assets/eye.png')} />
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={styles.textInputFieldMainView}>
-          <Text style={styles.textLabel}>Confirm Password</Text>
+        <View style={appStyles.textInputFieldMainView}>
+          <Text style={appStyles.textlabel}>Confirm Password</Text>
           <View style={{ flexDirection: 'row' }}>
-            <TextInput secureTextEntry={!isConfirmPasswordVisible} style={styles.textInput} placeholder='**********'></TextInput>
+            <TextInput secureTextEntry={!isConfirmPasswordVisible} style={appStyles.inputTextField} placeholder='**********' onChangeText={handleConfirmPasswordChange} value={confirmPassword}></TextInput>
             <TouchableOpacity onPress={toggleConfirmPasswordVisibility}>
-              <Image style={styles.textInputImage} source={require('../../../assets/eye.png')} />
+              <Image style={appStyles.textInputImage} source={require('../../../assets/eye.png')} />
             </TouchableOpacity>
           </View>
         </View>
 
 
         <View style={{ flexDirection: 'row' }}>
-          <CheckBox value={isSelected} onValueChange={setSelection} style={styles.checkbox} />
-          <Text style={[styles.align, styles.colorBlack]}>Accept T&C, Privacy Policy</Text>
+          <CheckBox value={isSelected} onValueChange={setSelection} style={appStyles.checkbox} />
+          <Text style={[appStyles.centerAlign, appStyles.textColor]}>Accept T&C, Privacy Policy</Text>
         </View>
 
-        <View style={styles.signUpBtnView}>
-          <TouchableOpacity onPress={() => { navigation.navigate('appNavigation',{screen:'ProfileScreen'}) }}><Text style={[styles.colorWhite, styles.align, styles.topPadding]}>SIGNUP</Text></TouchableOpacity>
+        <View style={appStyles.blackButtonView}>
+          <TouchableOpacity onPress={handleCheckUsername}><Text style={[appStyles.colorWhite, appStyles.centerAlign, appStyles.topPadding]}>SIGNUP</Text></TouchableOpacity>
         </View>
       </View>
 
       <View style={{ flex: 2 }}>
         <View>
-          <Text style={[{ marginBottom: 10, marginTop: 10 }, styles.colorBlack, styles.align]}>Already have an account?</Text>
-          <View style={styles.loginBtnView}>
+          <Text style={[appStyles.dontHaveAccountText, appStyles.textColor, appStyles.centerAlign]}>Already have an account?</Text>
+          <View style={appStyles.createAccountView}>
             <TouchableOpacity onPress={() => { navigation.navigate('LoginScreen3') }}>
-              <Text style={[styles.align, styles.colorBlack, styles.topPadding]}>LOGIN</Text>
+              <Text style={[appStyles.centerAlign, appStyles.textColor, appStyles.topPadding]}>LOGIN</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -98,98 +125,6 @@ const SignUpScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  loginBtnView: {
-    borderRadius: responsiveWidth(10),
-    width: responsiveWidth(70),
-    height: responsiveHeight(7),
-    backgroundColor: '#B7B7B780',
-    alignSelf: 'center',
-  },
-  signUpBtnView: {
-    marginTop: responsiveHeight(3),
-    borderRadius: responsiveWidth(10),
-    width: responsiveWidth(70),
-    height: responsiveHeight(7),
-    backgroundColor: 'black',
-    alignSelf: 'center',
-  },
-  topPadding: {
-    paddingTop: responsiveHeight(2),
-  },
-  colorWhite: {
-    color: 'white'
-  },
-  align: {
-    alignSelf: 'center'
-  },
-  colorBlack: {
-    color: 'black'
-  },
-  textInputImage: {
-    marginLeft: responsiveWidth(1),
-    height: responsiveHeight(3),
-    width: responsiveWidth(5),
-  },
-  textInput: {
-    marginLeft: responsiveWidth(3),
-    width: responsiveWidth(75),
-    color: 'black',
-  },
-  textLabel: {
-    marginTop: responsiveHeight(1),
-    marginLeft: responsiveWidth(4),
-    width: responsiveWidth(50),
-    color: 'black',
-  },
-  textInputFieldMainView: {
-    flex: 1,
-    borderRadius: responsiveWidth(3),
-    width: responsiveWidth(90),
-    height: responsiveHeight(10),
-    backgroundColor: '#EEEEE0',
-    marginLeft: responsiveWidth(4),
-    marginTop: responsiveHeight(2),
-  },
-  container: {
-    flex: 1,
-  },
-  headerImage: {
 
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    marginTop: responsiveHeight(7),
-    marginLeft: responsiveWidth(17),
-    marginRight: responsiveWidth(17),
-    width: responsiveWidth(57),
-    height: responsiveHeight(15),
-  },
-  textStyle: {
-    marginLeft: responsiveWidth(17),
-    marginRight: responsiveWidth(17),
-    marginTop: responsiveHeight(2),
-    fontFamily: 'Oxygen',
-    fontWeight: 'bold',
-    fontSize: responsiveFontSize(3.3),
-    textAlign: 'center',
-    color: 'black'
-
-  },
-  checkbox: {
-    alignSelf: 'center',
-    marginLeft: responsiveWidth(3),
-
-  },
-  underLineView: {
-    marginRight: responsiveWidth(32),
-    height: responsiveHeight(1),
-    borderColor: '#F6CD5B',
-    width: responsiveWidth(30),
-    borderRadius: 50,
-    backgroundColor: '#F6CD5B',
-    alignSelf: 'center',
-  },
-
-});
 
 export default SignUpScreen;

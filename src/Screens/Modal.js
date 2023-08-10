@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Image, Modal } from 'react-native';
-// import Modal from "react-native-modal";
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize
-} from "react-native-responsive-dimensions";
-import ChatScreen from './appFlow/chatscreen/chatscreen';
+import { View, Text,  TextInput, TouchableOpacity, Image, Modal } from 'react-native';
+import { appStyles } from '../services/utilities/appstyle';
 
 
 
@@ -18,7 +12,7 @@ const ModalPopUp = (props) => {
   const chatScreenNav = () => {
     
     navigation.navigate('ChatScreen',{userAvatar, name});
-    //console.log('user avatar: ', userAvatar,name);
+    // console.log('user avatar: ', userAvatar,name);
     
     senddata(false);  };
   const toggleModal = () => {
@@ -27,7 +21,7 @@ const ModalPopUp = (props) => {
 
   return (
 
-    <View styles={styles.container}>
+    <View styles={[appStyles.container,appStyles.flexEnd]}>
 
 
       <Modal
@@ -41,11 +35,11 @@ const ModalPopUp = (props) => {
        
 
       >
-        <View style={styles.viewInModal}>
-          <Image style={{ alignSelf: 'center', marginTop: responsiveHeight(4) }} source={image} />
-          <Text style={styles.nameText}>{name}</Text>
-          <View style={styles.continueButtonView}>
-            <TouchableOpacity onPress={() => { chatScreenNav(); setModalVisible(false); }}><Text style={styles.continueButtonText}>CONTINUE</Text></TouchableOpacity>
+        <View style={appStyles.viewInModalcomp}>
+          <Image style={appStyles.modalImageStyle} source={image} />
+          <Text style={[appStyles.nameModalText,appStyles.textfontfamily]}>{name}</Text>
+          <View style={[appStyles.continueButtonViewModal,appStyles.centerAlign]}>
+            <TouchableOpacity onPress={() => { chatScreenNav(); setModalVisible(false); }}><Text style={appStyles.continueButtonTextModal}>CONTINUE</Text></TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -58,43 +52,6 @@ const ModalPopUp = (props) => {
 
 
 
-const styles = StyleSheet.create({
-  continueButtonView: {
-    marginTop: responsiveHeight(3), 
-    borderRadius: responsiveWidth(10), 
-    width: responsiveWidth(65), 
-    height: responsiveHeight(7), 
-    backgroundColor: 'black', 
-    alignSelf: 'center'
-  },
-  viewInModal: {
-    marginVertical:responsiveHeight(45),
-    justifyContent: 'flex-end',
-  
-    height: responsiveHeight(50),  
-    borderTopLeftRadius: responsiveWidth(15), 
-    borderTopRightRadius: responsiveWidth(15),
-  },
-  continueButtonText: {
-    color: 'white', alignSelf: 'center', paddingTop: responsiveHeight(2),
-  },
-  
-  container: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  
- 
-  nameText: {
-    marginTop: responsiveHeight(3),
-    marginLeft: responsiveWidth(10),
-    marginRight: responsiveWidth(10),
-    fontFamily: 'Oxygen',
-    fontWeight: 'bold',
-    fontSize: responsiveFontSize(3),
-    textAlign: 'center',
-    color: 'black'
-  },
-});
+
 
 export default ModalPopUp;

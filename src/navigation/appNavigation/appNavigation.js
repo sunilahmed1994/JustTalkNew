@@ -11,14 +11,12 @@ const AppNavigation =()=> {
  
     return (
      
-          
             <Stack.Navigator >
               <Stack.Screen name="ForgetPasswordScreen" component={ForgetPasswordScreen} options={{ headerTitle:'Reset Your Password' }} />
               <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ headerShown: false }} />
-              <Stack.Screen name= "ChatScreen" component={ChatScreen} options={{headerTitle:"ChatScreen"}}/>
+              <Stack.Screen name= "ChatScreen" component={ChatScreen} options={{headerShown: false}}/>
             </Stack.Navigator>
        
-      
     );
 
  

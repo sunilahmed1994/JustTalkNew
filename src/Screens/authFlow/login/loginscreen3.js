@@ -1,68 +1,92 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Image, TextInput, ScrollView, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
+import { View, Text,  Image, TextInput, ScrollView, TouchableOpacity,Alert } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { appStyles } from '../../../services/utilities/appstyle';
 
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize
-} from "react-native-responsive-dimensions";
-import AuthNavigation from '../../../navigation/authNavigation/authNavigation';
 
 const LoginScreen3 = ({ navigation }) => {
   const [isSelected, setSelection] = useState(false);
   const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState(''); // Add password state
+  const existingUsername = 'johndoe123'; // Replace with your existing username
+  const existingPassword = 'password123'; // Replace with your existing password
 
+  const handleCheckUsername = () => {
+    if (username === existingUsername && password === existingPassword) {
+      // Both username and password match, navigate to profile screen
+      navigation.navigate('appNavigation', { screen: 'ProfileScreen' });
+    } else if (username === existingUsername && password !== existingPassword) {
+      // Username matches, but password doesn't match, show error message
+      Alert.alert('Error', 'Your password does not match');
+    } else {
+      // Username does not match, show error message
+      Alert.alert('Error', 'Your username does not match');
+    }
+  };
+
+  const handleUsernameChange = (text) => {
+    setUsername(text);
+  };
+  const handlePasswordChange = (text) => {
+    setPassword(text);
+  };
   const togglePasswordVisibility = () => {
     setPasswordVisible(!isPasswordVisible);
   };
   return (
     
-<KeyboardAwareScrollView contentContainerStyle={{ flexGrow:1 }}
-      keyboardShouldPersistTaps="handled" behavior="padding" >
-      <View style={{ flex: 1 }}>
-        <View style={{ flex: 1,  justifyContent: 'space-around', alignItems: 'center' }}>
+<ScrollView contentContainerStyle={{ flexGrow:1 }}
+      keyboardShouldPersistTaps="handled"  >
+      <View style={appStyles.container}>
+        <View style={appStyles.headerImageView}>
           <Image
             source={require('../../../assets/justtalk.png')}
-            style={styles.headerImage}
+            style={appStyles.headerImage}
           />
         </View>
 
-        <View style={{ flex: 0.3,  justifyContent: 'flex-end' }}>
-          <Text style={styles.textStyle}>Welcome To Login!</Text>
+        <View style={appStyles.welcomeLoginView}>
+          <Text style={[appStyles.welcomeTextStyle, appStyles.textfontfamily]}>Welcome To Login!</Text>
         </View>
 
-        <View style={styles.underLineView} />
+        <View style={appStyles.underLineView} />
       </View>
 
 
       <View style={{ flex: 1}}>
-        <View style={styles.textInputFieldMainView}>
-          <Text style={styles.textLabel}>Email</Text>
-            <TextInput  style={styles.textInput} placeholder='johndoe123'></TextInput>
+        <View style={appStyles.textInputFieldMainView}>
+          <Text style={appStyles.textlabel}>Email</Text>
+           <View style={{flexDirection:'row'}}>
+            <TextInput  style={appStyles.inputTextField} placeholder='johndoe123' onChangeText={handleUsernameChange} value={username}/>
+            <TouchableOpacity>
+            {username === existingUsername && (
+              <Image style={appStyles.textInputImage} source={require('../../../assets/checkcircle.png')} />
+              )}
+              </TouchableOpacity>
+          </View>
         </View>
 
-        <View style={styles.textInputFieldMainView}>
-          <Text style={styles.textLabel}>Password</Text>
+        <View style={appStyles.textInputFieldMainView}>
+          <Text style={appStyles.textlabel}>Password</Text>
           <View style={{ flexDirection: 'row' }}>
-            <TextInput secureTextEntry={!isPasswordVisible} style={styles.textInput} placeholder='**********'></TextInput>
+            <TextInput secureTextEntry={!isPasswordVisible} style={appStyles.inputTextField} placeholder='**********' onChangeText={handlePasswordChange} value={password} ></TextInput>
             <TouchableOpacity onPress={togglePasswordVisibility}>
-              <Image style={styles.textInputImage} source={require('../../../assets/eye.png')} />
+              <Image style={appStyles.textInputImage} source={require('../../../assets/eye.png')} />
             </TouchableOpacity>
           </View>
         </View>
 
-        <View style={{ flexDirection: 'row', flex: 2, marginTop:responsiveHeight(1)}}>
-          <CheckBox value={isSelected} onValueChange={setSelection} style={styles.checkbox} />
-          <Text style={[styles.textColor, styles.centerAlign]}>Remember me</Text>
-          <TouchableOpacity style={styles.touchableForget} onPress={() => { navigation.navigate('appNavigation',{screen:'ForgetPasswordScreen'}) }}>
-            <Text style={styles.textColor}>Forget Password</Text>
+        <View style={appStyles.checkBoxOuterView}>
+          <CheckBox value={isSelected} onValueChange={setSelection} style={appStyles.checkbox} />
+          <Text style={[appStyles.textColor, appStyles.centerAlign]}>Remember me</Text>
+          <TouchableOpacity style={[appStyles.touchableForget,appStyles.centerAlign]} onPress={() => { navigation.navigate('appNavigation',{screen:'ForgetPasswordScreen'}) }}>
+            <Text style={appStyles.textColor}>Forget Password</Text>
           </TouchableOpacity>
         </View>
 
-        <View style={[styles.loginButtonView]}>
-          <TouchableOpacity onPress={() => { navigation.navigate('appNavigation', { screen: 'ProfileScreen' }) }}><Text style={styles.loginText}>LOG IN</Text></TouchableOpacity>
+        <View style={[appStyles.loginButtonView]}>
+          <TouchableOpacity onPress={handleCheckUsername}><Text style={appStyles.loginButtonText}>LOG IN</Text></TouchableOpacity>
         </View>
       </View>
 
@@ -72,135 +96,22 @@ const LoginScreen3 = ({ navigation }) => {
 
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.dontHaveAccountText}>Don't have an account?</Text>
-          <View style={styles.createAccountView}>
+          <Text style={[appStyles.dontHaveAccountText,appStyles.textColor,appStyles.centerAlign]}>Don't have an account?</Text>
+          <View style={appStyles.createAccountView}>
             <TouchableOpacity onPress={() => { navigation.navigate('SignUpScreen') }}>
-              <Text style={[styles.textColor, styles.centerAlign, styles.createAccountText]}>
+              <Text style={[appStyles.textColor, appStyles.centerAlign, appStyles.topPadding]}>
                 CREATE AN ACCOUNT
               </Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
-</KeyboardAwareScrollView>
+</ScrollView>
 
     
   );
 };
 
-const styles = StyleSheet.create({
-  textInputImage: {
-    marginLeft: responsiveWidth(1),
-    // height: responsiveHeight(3),
-    width: responsiveWidth(5),
-  },
-  textInputFieldMainView: {
-    flex: 1,
-    borderRadius: responsiveWidth(3),
-    width: responsiveWidth(90),
-    // height: responsiveHeight(8),
-    backgroundColor: '#EEEEE0',
-    marginLeft: responsiveWidth(4),
-    marginTop: responsiveHeight(1),
-  },
-  textLabel: {
-    marginTop: responsiveHeight(1),
-    marginLeft: responsiveWidth(4),
-    width: responsiveWidth(50),
-    color: 'black',
-  },
-  createAccountText: {
-    paddingTop: responsiveHeight(2),
-  },
-  createAccountView: {
-    borderRadius: responsiveWidth(10),
-    width: responsiveWidth(70),
-    height: responsiveHeight(7),
-    backgroundColor: '#B7B7B780',
-    alignSelf: 'center',
-    
-  },
-  dontHaveAccountText: {
-    marginTop: responsiveHeight(2),
-    color: 'black',
-    alignSelf: 'center',
-    marginBottom: responsiveHeight(1),
-  },
-  loginText: {
-    color: 'white',
-    alignSelf: 'center',
-    paddingTop: responsiveHeight(2),
-  },
-  loginButtonView: {
-    marginTop: responsiveHeight(3),
-    height:responsiveHeight(6),
-    borderRadius: responsiveWidth(10),
-    width: responsiveWidth(70),
-    backgroundColor: 'black',
-    alignSelf: 'center',
-    flex: 1,
-    marginBottom: responsiveHeight(2),
-    
-  },
-  touchableForget: {
-    paddingLeft: responsiveWidth(35),
-    alignSelf: 'center',
-  },
-  container: {
-    flex: 1,
-  },
-  headerImage: {
 
-    width: responsiveWidth(57), // Adjust the size according to your logo's dimensions
-    height: responsiveHeight(15), // Adjust the size according to your logo's dimensions
-  },
-  textStyle: {
-    justifyContent: 'space-around',
-    fontFamily: 'Oxygen',
-    fontWeight: 'bold',
-    fontSize: responsiveFontSize(3),
-    textAlign: 'center',
-    color: 'black'
-
-  },
-  checkbox: {
-    alignSelf: 'center',
-    marginLeft: responsiveWidth(4),
-
-  },
-  underLineView: {
-    marginRight: responsiveWidth(24),
-    height: responsiveHeight(1),
-    borderColor: '#F6CD5B',
-    width: responsiveWidth(30),
-    borderRadius: 50,
-    backgroundColor: '#F6CD5B',
-    alignSelf: 'center',
-  },
-  emailView: {
-    marginLeft: responsiveWidth(5),
-    marginTop: responsiveHeight(3),
-    borderRadius: responsiveWidth(3),
-    width: responsiveWidth(90),
-    // height: responsiveHeight(5),
-    backgroundColor: '#EEEEE0',
-    flex: 1,
-
-  },
-  
-  textInput: {
-    marginLeft: responsiveWidth(3),
-    width: responsiveWidth(75),
-    color: 'black',
-  },
-  
- 
-  textColor: {
-    color: 'black'
-  },
-  centerAlign: {
-    alignSelf: 'center'
-  },
-});
 
 export default LoginScreen3;

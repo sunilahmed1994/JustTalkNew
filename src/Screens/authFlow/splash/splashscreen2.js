@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize
-} from "react-native-responsive-dimensions";
+import { View, Text,  Image } from 'react-native';
+import { appStyles } from '../../../services/utilities/appstyle';
 
 const SplashScreen2 = ({navigation}) => {
 
@@ -20,23 +16,12 @@ const SplashScreen2 = ({navigation}) => {
     
 
   return (
-    <View style={styles.container}>
-      <Image style={styles.logo} source={require('../../../assets/launchscreen.png') }/>
+    <View style={[appStyles.splashcontainer,appStyles.splash2backgroundcolor]}>
+      <Image style={appStyles.splash2logo} source={require('../../../assets/launchscreen.png') }/>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F6CD5B'
-  },
-  logo: {
-    width: responsiveWidth(50), 
-    height: responsiveHeight(30),
-  },
-})
+
 
 export default SplashScreen2;

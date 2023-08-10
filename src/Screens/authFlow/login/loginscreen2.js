@@ -1,10 +1,6 @@
 import React, {useEffect} from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import {
-  responsiveHeight,
-  responsiveWidth,
-  responsiveFontSize
-} from "react-native-responsive-dimensions";
+import { View, Text,  Image } from 'react-native';
+import { appStyles } from '../../../services/utilities/appstyle';
 
 const LoginScreen2 = ({navigation}) => {
     useEffect(() => {
@@ -18,55 +14,24 @@ const LoginScreen2 = ({navigation}) => {
       }, [navigation]);
   return (
 
-    <View styles={styles.container}>
+    <View styles={appStyles.container}>
 
       <View>
         <Image
           source={require('../../../assets/justtalk.png')}
-          style={styles.headerImage}
+          style={appStyles.headerImage}
         />
       </View>
 
       <View>
-        <Text style={styles.textStyle}>Welcome To Login!</Text>
+        <Text style={[appStyles.logintextStyle,appStyles.textfontfamily]}>Welcome To Login!</Text>
       </View>
 
-      <View style={styles.underLineView}/>
+      <View style={appStyles.underLineView}/>
       </View>
 
 
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  headerImage: {
-    marginTop: responsiveHeight(6),
-    marginLeft: responsiveWidth(18),
-    width: responsiveWidth(57), 
-    height: responsiveHeight(15),
-  },
-  textStyle: {
-    marginLeft: responsiveWidth(2),
-    marginTop: responsiveHeight(3),
-    fontFamily: 'Oxygen',
-    fontWeight: 'bold',
-    fontSize: responsiveFontSize(3.3),
-    textAlign: 'center',
-    color: 'black'
-
-  },
-  underLineView:{
-    marginRight: responsiveWidth(24),
-    height:responsiveHeight(1),
-    borderColor:'#F6CD5B', 
-    width:responsiveWidth(30),
-    borderRadius:50,
-    backgroundColor:'#F6CD5B',
-    alignSelf:'center',
-  }
-});
 
 export default LoginScreen2;
