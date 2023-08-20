@@ -7,13 +7,13 @@ import ChatScreen  from '../../../src/Screens/appFlow/chatscreen/chatscreen';
 
 const Stack = createNativeStackNavigator();
 
-const AppNavigation =()=> {
+const AppNavigation =({navigation})=> {
  
     return (
      
             <Stack.Navigator >
-              <Stack.Screen name="ForgetPasswordScreen" component={ForgetPasswordScreen} options={{ headerTitle:'Reset Your Password' }} />
               <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="ForgetPasswordScreen" component={ForgetPasswordScreen} options={{ headerTitle:'Reset Your Password' }} />
               <Stack.Screen name= "ChatScreen" component={ChatScreen} options={{headerShown: false}}/>
             </Stack.Navigator>
        

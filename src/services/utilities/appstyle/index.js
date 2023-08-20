@@ -285,6 +285,7 @@ export const appStyles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         flexWrap: 'wrap',
+       
       },
       profilecenterimage: {
         zIndex: -1,
@@ -305,5 +306,14 @@ export const appStyles = StyleSheet.create({
       },
       imageNameColor: {
         color: 'black',
+      },
+      customInputToolBar:{
+        marginRight:responsiveWidth(3),
+        marginLeft:responsiveWidth(3),
+        backgroundColor: '#363333',
+        borderRadius: responsiveWidth(10),
+        autoCorrect:false,
+        autoCapitalize:"none",
+        
       },
 })

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useContext , useEffect} from 'react';
 import { View, Text,  Image, TextInput, ScrollView,  TouchableOpacity, Alert } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import { appStyles } from '../../../services/utilities/appstyle';
+import { AuthContext } from '../../../navigation/authProvider';
+import { firebase } from '@react-native-firebase/firestore';
 
 
 const SignUpScreen = ({ navigation }) => {
@@ -11,20 +13,46 @@ const SignUpScreen = ({ navigation }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [username, setUsername] = useState('');
-  const existingUsername = 'johndoe123'; // Replace with your existing username
+  const {register} =  useContext(AuthContext);
+  const [userExists, setUserExists] = useState(false);
+  const [existingUsers, setExistingUsers] = useState([]); // To store existing user data
   
-  const handleCheckUsername = () => {
-    if (username === existingUsername) {
-      Alert.alert('Error', 'Your username already exists');
-    } else {
-      // Username does not match, check password and confirm password
-      if (password === confirmPassword) {
-        navigation.navigate('appNavigation', { screen: 'ProfileScreen' });
-      } else {
-        Alert.alert('Error', 'Passwords do not match');
-      }
+  const fetchExistingUsers = async () => {
+    try {
+      const usersCollection = firebase.firestore().collection('users');
+      const snapshot = await usersCollection.get();
+      const usersData = snapshot.docs.map(doc => doc.data());
+      setExistingUsers(usersData);
+    } catch (error) {
+      console.error('Error fetching existing users:', error);
     }
   };
+
+  // Fetch existing users when the component mounts
+  useEffect(() => {
+    fetchExistingUsers();
+  }, []);
+
+
+  const handleCheckUsername = () => {
+    // Validate username and password against existing users
+    const user = existingUsers.find(user => user.username === username);
+
+    if (user) {
+      // Username already exists
+      Alert.alert('Error', 'Username already exists');
+    } else if (password !== confirmPassword) {
+      // Passwords do not match
+      Alert.alert('Error', 'Passwords do not match');
+    } else {
+      // Register user and navigate
+      register(username, password);
+      navigation.navigate('appNavigation', { screen: 'ProfileScreen' });
+    }
+  };
+    
+    
+ 
 
   const handlePasswordChange = (text) => {
     setPassword(text);
@@ -35,6 +63,9 @@ const SignUpScreen = ({ navigation }) => {
   };
   const handleUsernameChange = (text) => {
     setUsername(text);
+    // Check if the input username exists in existingUsers
+    const userExists = existingUsers.some(user => user.username === text);
+    setUserExists(userExists);
   };
 
   const togglePasswordVisibility = () => {
@@ -69,9 +100,11 @@ const SignUpScreen = ({ navigation }) => {
           <View style={{ flexDirection: 'row' }}>
             <TextInput style={appStyles.inputTextField} placeholder='johndoe123' onChangeText={handleUsernameChange} value={username}/>
             <TouchableOpacity>
-            {username === existingUsername && (
+            
+
+            { userExists &&
               <Image style={appStyles.textInputImage} source={require('../../../assets/checkcircle.png')} />
-              )}
+            }
               </TouchableOpacity>
           </View>
         </View>

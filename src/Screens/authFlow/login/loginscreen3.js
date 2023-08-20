@@ -1,32 +1,85 @@
-import React, { useState } from 'react';
-import { View, Text,  Image, TextInput, ScrollView, TouchableOpacity,Alert } from 'react-native';
+import React, { useState,useContext, useEffect } from 'react';
+import { View, Text,  Image, TextInput, ScrollView, TouchableOpacity,Alert, ActivityIndicator } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import { appStyles } from '../../../services/utilities/appstyle';
+import { AuthContext } from '../../../navigation/authProvider';
+import { firebase } from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const LoginScreen3 = ({ navigation }) => {
-  const [isSelected, setSelection] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState(''); // Add password state
-  const existingUsername = 'johndoe123'; // Replace with your existing username
-  const existingPassword = 'password123'; // Replace with your existing password
+  const [existingUsers, setExistingUsers] = useState([]); // To store existing user data
+  const [userExists, setUserExists] = useState(false);
+ 
+  const [isLoading, setLoading] = useState(false); // Add isLoading state
+  const {login, isLoggedIn} =  useContext(AuthContext);
 
-  const handleCheckUsername = () => {
-    if (username === existingUsername && password === existingPassword) {
-      // Both username and password match, navigate to profile screen
-      navigation.navigate('appNavigation', { screen: 'ProfileScreen' });
-    } else if (username === existingUsername && password !== existingPassword) {
-      // Username matches, but password doesn't match, show error message
-      Alert.alert('Error', 'Your password does not match');
-    } else {
-      // Username does not match, show error message
-      Alert.alert('Error', 'Your username does not match');
+  const fetchExistingUsers = async () => {
+    try {
+      const usersCollection = firebase.firestore().collection('users');
+      const snapshot = await usersCollection.get();
+      const usersData = snapshot.docs.map(doc => doc.data());
+      setExistingUsers(usersData);
+    } catch (error) {
+      console.error('Error fetching existing users:', error);
     }
   };
 
+  // Fetch existing users when the component mounts
+  useEffect(() => {
+    fetchExistingUsers();
+    loadSavedCredentials();
+  }, []);
+
+  const loadSavedCredentials = async () => {
+    try {
+      const savedUsername = await AsyncStorage.getItem('username');
+      const savedPassword = await AsyncStorage.getItem('password');
+
+      if (savedUsername && savedPassword) {
+        setUsername(savedUsername);
+        setPassword(savedPassword);
+        setRememberMe(true);
+      }
+    } catch (error) {
+      console.error('Error loading saved credentials:', error);
+    }
+  };
+  const handleCheckUsername = async () => {
+    try{
+      setLoading(true); // Start loading indicator
+      await login(username,password);
+      if (rememberMe) {
+        saveCredentialsLocally(username, password);
+      }
+      if (isLoggedIn) {
+       navigation.navigate('appNavigation', { screen: 'ProfileScreen' });
+       Alert.alert('Welcome', username);
+      }
+    }catch(e){
+      console.log('Login Button Press',e);
+    }finally {
+      setLoading(false); // Stop loading indicator
+    }
+    
+  };
+  const saveCredentialsLocally = async (username, password) => {
+    try {
+      await AsyncStorage.setItem('username', username);
+      await AsyncStorage.setItem('password', password);
+    } catch (error) {
+      console.error('Error saving credentials locally:', error);
+    }
+  };
   const handleUsernameChange = (text) => {
     setUsername(text);
+    const userExists = existingUsers.some(user => user.username === text);
+    
+    setUserExists(userExists);
   };
   const handlePasswordChange = (text) => {
     setPassword(text);
@@ -60,9 +113,9 @@ const LoginScreen3 = ({ navigation }) => {
            <View style={{flexDirection:'row'}}>
             <TextInput  style={appStyles.inputTextField} placeholder='johndoe123' onChangeText={handleUsernameChange} value={username}/>
             <TouchableOpacity>
-            {username === existingUsername && (
+            {userExists &&
               <Image style={appStyles.textInputImage} source={require('../../../assets/checkcircle.png')} />
-              )}
+              }
               </TouchableOpacity>
           </View>
         </View>
@@ -78,7 +131,7 @@ const LoginScreen3 = ({ navigation }) => {
         </View>
 
         <View style={appStyles.checkBoxOuterView}>
-          <CheckBox value={isSelected} onValueChange={setSelection} style={appStyles.checkbox} />
+          <CheckBox value={rememberMe} onValueChange={setRememberMe} style={appStyles.checkbox} />
           <Text style={[appStyles.textColor, appStyles.centerAlign]}>Remember me</Text>
           <TouchableOpacity style={[appStyles.touchableForget,appStyles.centerAlign]} onPress={() => { navigation.navigate('appNavigation',{screen:'ForgetPasswordScreen'}) }}>
             <Text style={appStyles.textColor}>Forget Password</Text>
@@ -86,7 +139,13 @@ const LoginScreen3 = ({ navigation }) => {
         </View>
 
         <View style={[appStyles.loginButtonView]}>
-          <TouchableOpacity onPress={handleCheckUsername}><Text style={appStyles.loginButtonText}>LOG IN</Text></TouchableOpacity>
+          <TouchableOpacity onPress={handleCheckUsername}>
+          {isLoading ? (
+            <ActivityIndicator size="small" color="white" /> // Display loading indicator
+             ) : (
+            <Text style={appStyles.loginButtonText}>LOG IN</Text>
+            )}
+          </TouchableOpacity>
         </View>
       </View>
 

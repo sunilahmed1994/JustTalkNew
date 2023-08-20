@@ -107,5 +107,5 @@ const ProfileScreen = (props) => {
   )
 }
 
-export default ProfileScreen
+export default ProfileScreen;
 
